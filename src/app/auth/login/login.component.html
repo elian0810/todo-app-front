@@ -5,6 +5,14 @@
     <input type="email" placeholder="Email" [(ngModel)]="email" name="email" required />
     <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="password" required />
 
-    <button type="submit">Ingresar</button>
+    <button type="submit" [disabled]="loading()">
+      <span *ngIf="!loading()">Ingresar</span>
+      <span *ngIf="loading()" class="loader"></span>
+    </button>
+
+    <!-- Mostrar mensaje si existe -->
+    <div *ngIf="message()" [ngClass]="{'alert-success': success(), 'alert-error': success() === false}" class="alert">
+      {{ message() }}
+    </div>
   </form>
 </div>
