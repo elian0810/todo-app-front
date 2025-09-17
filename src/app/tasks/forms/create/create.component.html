@@ -1,0 +1,17 @@
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>Crear Nueva Tarea</h2>
+
+    <input type="text" placeholder="Título" [(ngModel)]="newTask.title" />
+    <input type="text" placeholder="Descripción" [(ngModel)]="newTask.description" />
+    <select [(ngModel)]="newTask.status_task">
+      <option [value]="1">Pendiente</option>
+      <option [value]="2">Completada</option>
+    </select>
+
+    <div class="modal-actions">
+      <button class="btn" (click)="save()">Guardar</button>
+      <button class="btn cancel" (click)="close()">Cancelar</button>
+    </div>
+  </div>
+</div>

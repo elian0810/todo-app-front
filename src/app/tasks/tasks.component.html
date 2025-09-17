@@ -1,22 +1,19 @@
 <div class="table-container">
+  <h2 class="table-title">Gestión de tareas por usuario</h2>
+
   <!-- Botón Crear externo -->
   <div class="top-actions">
-    <button class="btn-create" (click)="showForm = !showForm">
-      {{ showForm ? 'Cancelar' : 'Crear Nueva Tarea' }}
+    <button class="btn-create" (click)="showForm = true">
+      + Crear Nueva Tarea
     </button>
   </div>
 
-  <!-- Formulario Crear -->
-  <div *ngIf="showForm" class="create-form">
-    <input type="text" placeholder="Título" [(ngModel)]="newTask.title" />
-    <input type="text" placeholder="Descripción" [(ngModel)]="newTask.description" />
-    <select [(ngModel)]="newTask.status_task">
-      <option [value]="1">Pendiente</option>
-      <option [value]="2">En progreso</option>
-      <option [value]="3">Completada</option>
-    </select>
-    <button (click)="createTask()">Guardar</button>
-  </div>
+  <!-- Modal Crear -->
+  <app-create *ngIf="showForm"
+    [newTask]="newTask"
+    (onCreate)="createTask($event)"
+    (onClose)="showForm = false">
+  </app-create>
 
   <!-- Loader -->
   <div *ngIf="loading()" class="loader-container">
@@ -30,10 +27,11 @@
   </div>
 
   <!-- Tabla -->
-  <table border="1" cellpadding="5" class="styled-table">
+  <table class="styled-table">
     <thead>
       <tr>
         <th>ID</th>
+        <th>Nombre del usuario</th>
         <th>Título</th>
         <th>Descripción</th>
         <th>Estado</th>
@@ -43,9 +41,15 @@
     <tbody>
       <tr *ngFor="let task of tasks()">
         <td>{{ task.id }}</td>
+        <td>{{ task.user.name + ' ' + task.user.last_name }}</td>
         <td>{{ task.title }}</td>
         <td>{{ task.description }}</td>
-        <td>{{ task.status_task?.name }}</td>
+        <td>
+          <span [ngClass]="{'status-pending': task.status_task?.name === 'Pendiente',
+                            'status-completed': task.status_task?.name === 'Completada'}">
+            {{ task.status_task?.name }}
+          </span>
+        </td>
         <td>{{ task.create_date | date:'yyyy-MM-dd HH:mm:ss' }}</td>
       </tr>
       <tr *ngIf="tasks().length === 0 && !loading()">
@@ -56,8 +60,8 @@
 
   <!-- Controles de paginación -->
   <div class="pagination-controls" *ngIf="totalPages() > 1">
-    <button (click)="prevPage()" [disabled]="page() === 1"> Anterior </button>
+    <button (click)="prevPage()" [disabled]="page() === 1"> ⬅ Anterior </button>
     <span> Página {{ page() }} de {{ totalPages() }} </span>
-    <button (click)="nextPage()" [disabled]="page() === totalPages()"> Siguiente </button>
+    <button (click)="nextPage()" [disabled]="page() === totalPages()"> Siguiente ➡ </button>
   </div>
 </div>
