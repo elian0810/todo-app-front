@@ -18,9 +18,12 @@ export class TaskComponent implements OnInit {
   loading = signal(false);
   tasks = signal<any[]>([]);
   message = signal<string | null>(null);
+  messageType = signal<string | null>(null);
   showForm = false;
   showEdit = false;
   editingTask: any = null;
+  confirmDelete = signal(false);
+  taskToDelete: any = null;
 
   newTask = { title: '', description: '', status_task: 1 };
   private apiUrl = 'http://127.0.0.1:8000/tasks/';
@@ -143,6 +146,40 @@ export class TaskComponent implements OnInit {
         }
       },
     });
+  }
+
+  openDeleteModal(task: any) {
+    this.taskToDelete = task;
+    this.confirmDelete.set(true);
+  }
+
+  cancelDelete() {
+    this.taskToDelete = null;
+    this.confirmDelete.set(false);
+  }
+
+  confirmDeleteTask() {
+    if (!this.taskToDelete?.id) return;
+
+    this.loading.set(true);
+    this.message.set(null);
+
+    this.http
+      .delete<any>(`${this.apiUrl}${this.taskToDelete.id}/`, { headers: this.getHeaders() })
+      .subscribe({
+        next: (res) => {
+          this.tasks.update((prev) => prev.filter((t) => t.id !== this.taskToDelete.id));
+          this.message.set(res.messages?.[0] || 'Tarea eliminada correctamente');
+          this.loading.set(false);
+          this.cancelDelete();
+        },
+        error: (err) => {
+          console.error('Error al eliminar tarea:', err);
+          this.message.set(err.error?.messages?.[0] || 'Error al eliminar la tarea');
+          this.loading.set(false);
+          this.cancelDelete();
+        },
+      });
   }
 
   nextPage() {

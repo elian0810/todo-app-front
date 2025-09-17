@@ -15,6 +15,7 @@
     (onClose)="showForm = false">
   </app-create>
 
+  <!-- Modal Editar -->
   <app-edit *ngIf="showEdit"
     [task]="editingTask"
     (onUpdate)="updateTask($event)"
@@ -27,12 +28,7 @@
     <span>Cargando datos...</span>
   </div>
 
-  <!-- Mensaje de error -->
-  <div *ngIf="message()" class="alert alert-error">
-    {{ message() }}
-  </div>
-
-  <!-- Tabla -->
+  <!-- Tabla de tareas -->
   <table class="styled-table">
     <thead>
       <tr>
@@ -60,24 +56,41 @@
           </span>
         </td>
         <td>{{ task.create_date | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-        <td>
-          <!-- Botón de editar con icono -->
+        <td class="action-buttons">
+          <!-- Botón Editar -->
           <button class="btn-edit" (click)="openEdit(task)" title="Editar">
-            <i class="fa fa-edit"></i> <!-- necesitas Font Awesome cargado -->
+            <i class="fa fa-edit"></i>
+          </button>
+
+          <!-- Botón Eliminar (abre modal) -->
+          <button class="btn-delete" (click)="openDeleteModal(task)" title="Eliminar">
+            <i class="fa fa-trash"></i>
           </button>
         </td>
       </tr>
+
       <tr *ngIf="tasks().length === 0 && !loading()">
         <td colspan="7" class="no-data">No hay datos disponibles</td>
       </tr>
     </tbody>
   </table>
 
-
-  <!-- Controles de paginación -->
+  <!-- Paginación -->
   <div class="pagination-controls" *ngIf="totalPages() > 1">
     <button (click)="prevPage()" [disabled]="page() === 1"> ⬅ Anterior </button>
     <span> Página {{ page() }} de {{ totalPages() }} </span>
     <button (click)="nextPage()" [disabled]="page() === totalPages()"> Siguiente ➡ </button>
+  </div>
+
+  <!-- Modal de confirmación de eliminación -->
+  <div class="modal-backdrop" *ngIf="confirmDelete()">
+    <div class="modal">
+      <h3>Confirmar Eliminación</h3>
+      <p>¿Seguro que quieres eliminar la tarea "<strong>{{ taskToDelete?.title }}</strong>"?</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="cancelDelete()">Cancelar</button>
+        <button class="btn-confirm" (click)="confirmDeleteTask()">Eliminar</button>
+      </div>
+    </div>
   </div>
 </div>
