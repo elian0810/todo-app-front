@@ -34,12 +34,16 @@ export class LoginComponent {
 
         this.success.set(body.success);
         this.message.set(body.messages?.[0] || 'Respuesta del backend');
+
+        if (body.success) {
+          // Redirige a la ruta de tasks si el login es exitoso
+          this.router.navigate(['/tasks']);
+        }
       },
       error: (err) => {
         this.loading.set(false);
         console.error('Error en la petición:', err);
 
-        // Si el backend envía JSON en error, Angular no lo parsea automáticamente
         if (err.error) {
           this.success.set(err.error.success);
           this.message.set(err.error.messages?.[0] || 'Error del backend');

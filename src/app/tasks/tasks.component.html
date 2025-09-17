@@ -1,0 +1,63 @@
+<div class="table-container">
+  <!-- Botón Crear externo -->
+  <div class="top-actions">
+    <button class="btn-create" (click)="showForm = !showForm">
+      {{ showForm ? 'Cancelar' : 'Crear Nueva Tarea' }}
+    </button>
+  </div>
+
+  <!-- Formulario Crear -->
+  <div *ngIf="showForm" class="create-form">
+    <input type="text" placeholder="Título" [(ngModel)]="newTask.title" />
+    <input type="text" placeholder="Descripción" [(ngModel)]="newTask.description" />
+    <select [(ngModel)]="newTask.status_task">
+      <option [value]="1">Pendiente</option>
+      <option [value]="2">En progreso</option>
+      <option [value]="3">Completada</option>
+    </select>
+    <button (click)="createTask()">Guardar</button>
+  </div>
+
+  <!-- Loader -->
+  <div *ngIf="loading()" class="loader-container">
+    <div class="loader"></div>
+    <span>Cargando datos...</span>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="message()" class="alert alert-error">
+    {{ message() }}
+  </div>
+
+  <!-- Tabla -->
+  <table border="1" cellpadding="5" class="styled-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Descripción</th>
+        <th>Estado</th>
+        <th>Hora de creación</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let task of tasks()">
+        <td>{{ task.id }}</td>
+        <td>{{ task.title }}</td>
+        <td>{{ task.description }}</td>
+        <td>{{ task.status_task?.name }}</td>
+        <td>{{ task.create_date | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+      </tr>
+      <tr *ngIf="tasks().length === 0 && !loading()">
+        <td colspan="5" class="no-data">No hay datos disponibles</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Controles de paginación -->
+  <div class="pagination-controls" *ngIf="totalPages() > 1">
+    <button (click)="prevPage()" [disabled]="page() === 1"> Anterior </button>
+    <span> Página {{ page() }} de {{ totalPages() }} </span>
+    <button (click)="nextPage()" [disabled]="page() === totalPages()"> Siguiente </button>
+  </div>
+</div>
