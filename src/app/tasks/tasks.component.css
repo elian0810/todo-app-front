@@ -97,3 +97,16 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.btn-edit {
+  background-color: #28a745;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+}
+
+.btn-edit i {
+  margin-right: 5px;
+}

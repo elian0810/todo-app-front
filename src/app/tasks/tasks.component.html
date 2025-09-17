@@ -15,6 +15,12 @@
     (onClose)="showForm = false">
   </app-create>
 
+  <app-edit *ngIf="showEdit"
+    [task]="editingTask"
+    (onUpdate)="updateTask($event)"
+    (onClose)="showEdit = false">
+  </app-edit>
+
   <!-- Loader -->
   <div *ngIf="loading()" class="loader-container">
     <div class="loader"></div>
@@ -36,6 +42,7 @@
         <th>Descripción</th>
         <th>Estado</th>
         <th>Hora de creación</th>
+        <th>Opciones</th>
       </tr>
     </thead>
     <tbody>
@@ -45,18 +52,27 @@
         <td>{{ task.title }}</td>
         <td>{{ task.description }}</td>
         <td>
-          <span [ngClass]="{'status-pending': task.status_task?.name === 'Pendiente',
-                            'status-completed': task.status_task?.name === 'Completada'}">
+          <span [ngClass]="{
+            'status-pending': task.status_task?.name === 'Pendiente',
+            'status-completed': task.status_task?.name === 'Completada'
+          }">
             {{ task.status_task?.name }}
           </span>
         </td>
         <td>{{ task.create_date | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+        <td>
+          <!-- Botón de editar con icono -->
+          <button class="btn-edit" (click)="openEdit(task)" title="Editar">
+            <i class="fa fa-edit"></i> <!-- necesitas Font Awesome cargado -->
+          </button>
+        </td>
       </tr>
       <tr *ngIf="tasks().length === 0 && !loading()">
-        <td colspan="5" class="no-data">No hay datos disponibles</td>
+        <td colspan="7" class="no-data">No hay datos disponibles</td>
       </tr>
     </tbody>
   </table>
+
 
   <!-- Controles de paginación -->
   <div class="pagination-controls" *ngIf="totalPages() > 1">

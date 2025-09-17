@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../apis/auth.service';
 import { Router } from '@angular/router';
 import { CreateComponent } from './forms/create/create.component.';
+import { EditComponent } from './forms/edit/edit.component.';
 
 @Component({
   selector: 'app-task',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule, CreateComponent],
+  imports: [CommonModule, HttpClientModule, FormsModule, CreateComponent, EditComponent],
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.css'],
 })
@@ -18,6 +19,8 @@ export class TaskComponent implements OnInit {
   tasks = signal<any[]>([]);
   message = signal<string | null>(null);
   showForm = false;
+  showEdit = false;
+  editingTask: any = null;
 
   newTask = { title: '', description: '', status_task: 1 };
   private apiUrl = 'http://127.0.0.1:8000/tasks/';
@@ -97,15 +100,60 @@ export class TaskComponent implements OnInit {
       });
   }
 
+  openEdit(task: any) {
+    this.editingTask = { ...task, status_task: task.status_task.id };
+    this.showEdit = true;
+  }
+
+  updateTask(updatedTask: any) {
+    const url = `${this.apiUrl}${updatedTask.id}/`;
+
+    const payload = {
+      title: updatedTask.title,
+      description: updatedTask.description,
+      status_task: updatedTask.status_task,
+    };
+
+    this.http.put<any>(url, payload, { headers: this.getHeaders() }).subscribe({
+      next: (res) => {
+        // actualizar la lista local con los nuevos datos
+        this.tasks.update((prev) =>
+          prev.map((t) => (t.id === updatedTask.id ? { ...t, ...payload } : t))
+        );
+        if (res.success) {
+          this.fetchTasks(1);
+
+          this.showEdit = false;
+        }
+
+        // mostrar mensaje del backend si existe
+        if (res.messages?.length) {
+          this.message.set(res.messages[0]);
+        } else {
+          this.message.set('Tarea actualizada correctamente');
+        }
+      },
+      error: (err) => {
+        console.error('Error al actualizar tarea:', err);
+
+        if (err.error?.messages?.length) {
+          this.message.set(err.error.messages[0]);
+        } else {
+          this.message.set('Error al actualizar la tarea');
+        }
+      },
+    });
+  }
+
   nextPage() {
     if (this.page() < this.totalPages()) {
-      this.fetchTasks(this.page() + 1); // reemplaza, no append
+      this.fetchTasks(this.page() + 1);
     }
   }
 
   prevPage() {
     if (this.page() > 1) {
-      this.fetchTasks(this.page() - 1); // reemplaza
+      this.fetchTasks(this.page() - 1);
     }
   }
 }
