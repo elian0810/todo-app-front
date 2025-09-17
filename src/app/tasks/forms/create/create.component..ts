@@ -24,8 +24,7 @@ export class CreateComponent {
 
     return (
       this.newTask.title?.trim().length > 0 &&
-      this.newTask.description?.trim().length > 0 &&
-      (this.newTask.status_task === 1 || this.newTask.status_task === 2)
+      this.newTask.description?.trim().length > 0
     );
   }
 
