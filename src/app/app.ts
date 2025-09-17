@@ -9,8 +9,8 @@ import { AuthService } from './apis/auth.service';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, HttpClientModule, LoginComponent], // <- IMPORTANTE
-  providers: [AuthService], // <- agrega esto
+  imports: [RouterOutlet, CommonModule, HttpClientModule],
+  providers: [AuthService],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

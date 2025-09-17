@@ -153,6 +153,33 @@ export class TaskComponent implements OnInit {
     this.confirmDelete.set(true);
   }
 
+  logout() {
+    const token = this.authService.getToken();
+    if (!token) return;
+
+    this.http
+      .delete(this.apiUrl, {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }),
+      })
+      .subscribe({
+        next: (res) => {
+          localStorage.removeItem('access');
+          localStorage.removeItem('refresh');
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          console.error('Error al cerrar sesión', err);
+          // Igual redirige aunque falle por token expirado
+          localStorage.removeItem('access');
+          localStorage.removeItem('refresh');
+          this.router.navigate(['/login']);
+        },
+      });
+  }
+
   cancelDelete() {
     this.taskToDelete = null;
     this.confirmDelete.set(false);
