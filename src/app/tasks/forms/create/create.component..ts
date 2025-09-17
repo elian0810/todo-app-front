@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [CommonModule, FormsModule], // 👈 AGREGA FormsModule AQUI
+  imports: [CommonModule, FormsModule],
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.css'],
 })
@@ -14,12 +14,36 @@ export class CreateComponent {
   @Output() onCreate = new EventEmitter<any>();
   @Output() onClose = new EventEmitter<void>();
 
+  showAlert = false;
+  alertMessage = '';
+
+  isValid(): boolean {
+    console.log('this.newTask.title', this.newTask.title);
+    console.log('this.newTask.description', this.newTask.description);
+    console.log('this.newTask.status_task', this.newTask.status_task);
+
+    return (
+      this.newTask.title?.trim().length > 0 &&
+      this.newTask.description?.trim().length > 0 &&
+      (this.newTask.status_task === 1 || this.newTask.status_task === 2)
+    );
+  }
+
   save() {
-    this.onCreate.emit(this.newTask); // manda la tarea al padre
+    if (!this.isValid()) {
+      this.alertMessage = 'Por favor, completa todos los campos.';
+      this.showAlert = true;
+      return;
+    }
+    this.onCreate.emit(this.newTask);
     this.close();
   }
 
   close() {
     this.onClose.emit();
+  }
+
+  closeAlert() {
+    this.showAlert = false;
   }
 }

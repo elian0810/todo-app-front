@@ -23,6 +23,13 @@ export class LoginComponent {
   constructor(private router: Router, private authService: AuthService) {}
 
   login() {
+    // Validar campos antes de enviar
+    if (!this.email.trim() || !this.password.trim()) {
+      this.success.set(false);
+      this.message.set('Por favor, completa todos los campos.');
+      return; // no sigue si faltan datos
+    }
+
     this.loading.set(true);
     this.message.set(null);
     this.success.set(null);
@@ -36,7 +43,6 @@ export class LoginComponent {
         this.message.set(body.messages?.[0] || 'Respuesta del backend');
 
         if (body.success) {
-          // Redirige a la ruta de tasks si el login es exitoso
           this.router.navigate(['/tasks']);
         }
       },

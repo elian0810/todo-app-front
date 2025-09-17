@@ -14,4 +14,12 @@
       <button class="btn cancel" (click)="close()">Cancelar</button>
     </div>
   </div>
+
+  <!-- Modal Alerta -->
+  <div class="alert-modal" *ngIf="showAlert">
+    <div class="alert-content">
+      <p>{{ alertMessage }}</p>
+      <button class="btn" (click)="closeAlert()">Cerrar</button>
+    </div>
+  </div>
 </div>
